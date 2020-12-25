@@ -5,10 +5,53 @@
 .stack 100h
 .data
     
-    dmsg1 db ' -------------------------$'
-    dmsg2 db ' | Bank Managment System |$ '
-    dmsg3 db ' -------------------------$'
+    dmsg1 db '    ____                 __      _____               __$'                 
+    dmsg2 db '   / __ ) ____ _ ____   / /__   / ___/ __  __ _____ / /_ ___   ____ ___$' 
+    dmsg3 db '  / __  |/ __ `// __ \ / //_/   \__ \ / / / // ___// __// _ \ / __ `__ \$'
+    dmsg4 db ' / /_/ // /_/ // / / // ,<     ___/ // /_/ /(__  )/ /_ /  __// / / / / /$'
+    dmsg5 db '/_____/ \__,_//_/ /_//_/|_|   /____/ \__, //____/ \__/ \___//_/ /_/ /_/$' 
+    dmsg6 db '                                    /____/$'                                                                                                                                               
     
+    op1mmsg1 db '   ______                    __$'      
+    op1mmsg2 db '  / ____/_____ ___   ____ _ / /_ ___$' 
+    op1mmsg3 db ' / /    / ___// _ \ / __ `// __// _ \$'
+    op1mmsg4 db '/ /___ / /   /  __// /_/ // /_ /  __/$'
+    op1mmsg5 db '\____//_/    \___/ \__,_/ \__/ \___/$'  
+    
+    op2mmsg1 db  '  ____         __          _  __$'     
+    op2mmsg2 db '  / __ \ ___   / /_ ____ _ (_)/ /_____$'
+    op2mmsg3 db ' / / / // _ \ / __// __ `// // // ___/$'
+    op2mmsg4 db '/ /_/ //  __// /_ / /_/ // // /(__  )$' 
+    op2mmsg5 db '/_____/ \___/ \__/ \__,_//_//_//____/$'
+    
+    op3mmsg1 db ' _       __ _  __   __         __$'                      
+    op3mmsg2 db '| |     / /(_)/ /_ / /_   ____/ /_____ ____ _ _      __$'
+    op3mmsg3 db '| | /| / // // __// __ \ / __  // ___// __ `/| | /| / /$'
+    op3mmsg4 db '| |/ |/ // // /_ / / / // /_/ // /   / /_/ / | |/ |/ /$' 
+    op3mmsg5 db '|__/|__//_/ \__//_/ /_/ \__,_//_/    \__,_/  |__/|__/$'  
+                                                         
+    op4mmsg1 db '    ____                             _  __ $'
+    op4mmsg2 db '   / __ \ ___   ____   ____   _____ (_)/ /_$'
+    op4mmsg3 db '  / / / // _ \ / __ \ / __ \ / ___// // __/$'
+    op4mmsg4 db ' / /_/ //  __// /_/ // /_/ /(__  )/ // /_$'  
+    op4mmsg5 db '/_____/ \___// .___/ \____//____//_/ \__/$'  
+    op4mmsg6 db '            /_/$'                                                               
+    
+    op5mmsg1 db '    __  ___            __ _  ____$'      
+    op5mmsg2 db '   /  |/  /____   ____/ /(_)/ __/__  __$'
+    op5mmsg3 db '  / /|_/ // __ \ / __  // // /_ / / / /$'
+    op5mmsg4 db ' / /  / // /_/ // /_/ // // __// /_/ /$' 
+    op5mmsg5 db '/_/  /_/ \____/ \__,_//_//_/   \__, /$'  
+    op5mmsg6 db '                              /____/$'
+    
+op0mmsg1 db '   ____   __   __U _____ u$' 
+op0mmsg2 db 'U | __")u \ \ / /\| ___"|/$' 
+op0mmsg3 db ' \|  _ \/  \ V /  |  _|"$'   
+op0mmsg4 db '  | |_) | U_|"|_u | |___$'   
+op0mmsg5 db '  |____/    |_|   |_____|$'  
+op0mmsg6 db ' _|| \\_.-,//|(_  <<   >>$'  
+op0mmsg7 db '(__) (__)\_) (__)(__) (__)$'   
+                                     
     opmsg1 db '1. Create new Account$'
     opmsg2 db '2. Print Account Details$'
     opmsg3 db '3. Withdraw Money $'
@@ -211,7 +254,14 @@ DisplayMenu proc near
     printString dmsg2
     call newLine
     printString dmsg3
+    call newLine     
+    printString dmsg4
     call newLine
+    printString dmsg5
+    call newLine
+    printString dmsg6
+    call newLine     
+    
     call newLine 
     printString opmsg1
     call newLine
@@ -289,6 +339,20 @@ etcop1 endp
 op1 proc
         
     call clearScreen
+    
+    printString op1mmsg1
+    call newLine
+    printString op1mmsg2
+    call newLine
+    printString op1mmsg3
+    call newLine
+    printString op1mmsg4
+    call newLine       
+    printString op1mmsg5
+    call newLine
+    call newLine
+    call newLine
+    
     printString op1msg1
     ISop11 accountName
     
@@ -333,6 +397,19 @@ op2 proc
   call getPinInput  ;gets the pin input for verification
   call clearScreen
   
+  printString op2mmsg1
+  call newLine
+  printString op2mmsg2
+  call newLine
+  printString op2mmsg3
+  call newLine
+  printString op2mmsg4
+  call newLine       
+  printString op2mmsg5
+  call newLine
+  call newLine
+  call newLine
+  
   printString op2msg1
   printString accountName  
   call newLine
@@ -363,6 +440,20 @@ op3 proc
   call checkAccountCreated  ;check whether the account has been created or not
   call getPinInput  ;gets the pin input
   call clearScreen
+  
+   
+  printString op3mmsg1
+  call newLine
+  printString op3mmsg2
+  call newLine
+  printString op3mmsg3
+  call newLine
+  printString op3mmsg4
+  call newLine       
+  printString op3mmsg5
+  call newLine
+  call newLine
+  call newLine
   
   printString op4msg1
   call newLine
@@ -457,6 +548,21 @@ op4 proc
   call checkAccountCreated  ;check whether the account has been created or not
   call getPinInput  ;gets the pin input
   call clearScreen
+  
+  printString op4mmsg1
+  call newLine
+  printString op4mmsg2
+  call newLine
+  printString op4mmsg3
+  call newLine
+  printString op4mmsg4
+  call newLine       
+  printString op4mmsg5
+  call newLine
+  printString op4mmsg6
+  call newLine
+  call newLine
+  call newLine
   
   printString op4msg1
   call newLine
@@ -596,6 +702,21 @@ op6 proc
   call getPinInput  ;gets the pin  
   call clearScreen
   
+  printString op5mmsg1
+  call newLine
+  printString op5mmsg2
+  call newLine
+  printString op5mmsg3
+  call newLine
+  printString op5mmsg4
+  call newLine       
+  printString op5mmsg5
+  call newLine
+  printString op5mmsg6
+  call newLine
+  call newLine
+  call newLine
+  
   ;;account name
   printString op6msg1_1
   printString accountName
@@ -677,6 +798,26 @@ Main proc
                        
     exit:
       
+      call newLine
+      call newLine
+      
+      printString op0mmsg1
+      call newLine
+      printString op0mmsg2
+      call newLine
+      printString op0mmsg3
+      call newLine
+      printString op0mmsg4
+      call newLine       
+      printString op0mmsg5
+      call newLine
+      printString op0mmsg6
+      call newLine
+      printString op0mmsg7
+      call newLine
+      
+      call newLine
+       
       mov ah,4ch
       int 21h
     
