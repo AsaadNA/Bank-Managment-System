@@ -24,7 +24,8 @@
     ;Account details  
     
     accountName db 100 dup('$')
-    accountPIN db 100 dup('$') 
+    accountPIN db 100 dup('$')
+    accountPINcount dw 0       ;This keeps track how many digit a pin is
     totalAmount dw 0
     inputAmountOption db ? 
                                   
@@ -44,7 +45,7 @@
     op4msg2 db '2. Rs 2000$'
     op4msg3 db '3. Rs 5000$'
     op4msg4 db '4. Rs 10000$'
-    op4msg5 db 'Enter Deposit Code: $'  
+    op4msg5 db 'Enter Code: $'  
     op4msg6 db 'You Are Withdrawing Too MUCH !$'
     
     ;Option 5 <Reset> Messages
@@ -52,13 +53,14 @@
     
     ;Option 6 <Modify Account> Messages  
     op6msg0   db 'Account Details Successfully Changed !$'
-    op6msg1_1 db '1. New Account Name ( $'
+    op6msg1_1 db '1. New Account Name ( old: $'
     op6msg1_2 db ' ) : $' 
-    op6msg2_1 db '2. New Account Pin ( $'
+    op6msg2_1 db '2. New Account Pin ( old: $'
     op6msg2_2 db ' ) : $'
     
     ;PIN Protection
-    pinop_msg1 db 'Enter Pin: $'
+    pinop_msg1 db 'Enter Pin: $' 
+    pinop_msg2 db 'Account not created ... $'
         
 .code
 
@@ -67,6 +69,30 @@
 ;                             U T I L S                             ;
 ;                                                                   ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;Enter to Continue
+proc etc
+   etcin:
+      mov ah,1
+      int 21h
+      cmp al,13
+      je mainloop
+      jmp etcin
+   ret 
+etc endp
+
+;This checks whether the account has been created or not using the pin Count
+checkAccountCreated proc
+  cmp accountPINcount,0
+  je accountNotCreated
+  ret
+  
+  accountNotCreated:
+    call clearScreen
+    printString pinop_msg2
+    call etc
+       
+checkAccountCreated endp
 
 ;just mov number to ax and call this proc
 printNumber PROC                  
@@ -152,7 +178,7 @@ getPinInput proc
   printString pinop_msg1
   
   mov si,offset accountPIN
-  mov cx,5
+  mov cx,accountPINcount     ;Search n amount of times the pin Count
   getinput:
     
     mov ah,7
@@ -240,6 +266,7 @@ macro ISop12 str
         int 21h
         cmp al,13
         je labelop1_2
+        inc accountPINcount
         mov [si],al
         inc si
         jmp input2
@@ -302,7 +329,8 @@ etcop2 endp
 
 op2 proc
   
-  call getPinInput  ;gets the pin input
+  call checkAccountCreated  ;check whether the account has been created or not 
+  call getPinInput  ;gets the pin input for verification
   call clearScreen
   
   printString op2msg1
@@ -332,6 +360,7 @@ op2 endp
  
 op3 proc
   
+  call checkAccountCreated  ;check whether the account has been created or not
   call getPinInput  ;gets the pin input
   call clearScreen
   
@@ -425,6 +454,7 @@ inputAmountCode endp
 
 op4 proc
   
+  call checkAccountCreated  ;check whether the account has been created or not
   call getPinInput  ;gets the pin input
   call clearScreen
   
@@ -488,6 +518,7 @@ etcop5 endp
 
 op5 proc
   
+  call checkAccountCreated  ;check whether the account has been created or not
   call getPinInput  ;gets the pin input   
     
   ;Do the rest of the work .. display the data
@@ -507,7 +538,9 @@ op5 proc
     inc si
   loop l2  
   
-  mov totalAmount,0    
+  mov totalAmount,0
+  mov accountPINcount,0 ;reset pin count
+      
   printString op5msg1
   call etcop5   
   ret  
@@ -545,20 +578,22 @@ endm
 
 macro ISop6_2 str
  mov si,offset str
+ mov accountPINcount,0 ;reset pin count
     ISop6_2input: 
         mov ah,1
         int 21h
         cmp al,13
         je labelop6_2
+        inc accountPINcount ;increment pin account again
         mov [si],al
         inc si
         jmp ISop6_2input   
 endm
 
 op6 proc
-      
-  call getPinInput  ;gets the pin input
   
+  call checkAccountCreated  ;check whether the account has been created or not    
+  call getPinInput  ;gets the pin  
   call clearScreen
   
   ;;account name
@@ -593,6 +628,18 @@ op6 endp
 ;                     E N T R Y    P O I N T                        ;
 ;                                                                   ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;1.  Create Account
+;2.  Deposit Money
+;3.  Widthdraw Money
+;4.  Print Account Details
+;5.  Modify Account
+;6.  Reset Account
+
+;7.  Dynamic Pin Range
+;8.  Pin Verification
+;9.  Checks if account is created before performing functions
+;10. When withdrawing, checks whether if u have enough money in account
             
 Main proc
     
