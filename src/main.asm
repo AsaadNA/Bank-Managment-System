@@ -56,6 +56,9 @@
     op6msg1_2 db ' ) : $' 
     op6msg2_1 db '2. New Account Pin ( $'
     op6msg2_2 db ' ) : $'
+    
+    ;PIN Protection
+    pinop_msg1 db 'Enter Pin: $'
         
 .code
 
@@ -141,6 +144,34 @@ macro printString str
   lea dx,str
   int 21h
 endm
+
+;Ask for user pin here
+getPinInput proc
+  call clearScreen
+ 
+  printString pinop_msg1
+  
+  mov si,offset accountPIN
+  mov cx,5
+  getinput:
+    
+    mov ah,7
+    int 21h
+    
+    cmp al,[si]
+    
+    mov dl,'*'
+    mov ah,2
+    int 21h
+    
+    jne mainloop
+    
+    inc si    
+  loop getinput
+  
+  ret        
+getPinInput endp
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
 ;                                                                   ;
@@ -229,7 +260,7 @@ proc etcop1
 etcop1 endp
 
 op1 proc
-    
+        
     call clearScreen
     printString op1msg1
     ISop11 accountName
@@ -271,6 +302,7 @@ etcop2 endp
 
 op2 proc
   
+  call getPinInput  ;gets the pin input
   call clearScreen
   
   printString op2msg1
@@ -300,6 +332,7 @@ op2 endp
  
 op3 proc
   
+  call getPinInput  ;gets the pin input
   call clearScreen
   
   printString op4msg1
@@ -392,6 +425,7 @@ inputAmountCode endp
 
 op4 proc
   
+  call getPinInput  ;gets the pin input
   call clearScreen
   
   printString op4msg1
@@ -454,7 +488,10 @@ etcop5 endp
 
 op5 proc
   
-  call clearScreen       
+  call getPinInput  ;gets the pin input   
+    
+  ;Do the rest of the work .. display the data
+  call clearScreen
   
   mov si,offset accountName
   mov cx,30
@@ -519,6 +556,8 @@ macro ISop6_2 str
 endm
 
 op6 proc
+      
+  call getPinInput  ;gets the pin input
   
   call clearScreen
   
