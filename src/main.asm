@@ -1,6 +1,22 @@
 ;Project Title: Bank Managment System
 ;Author: Asaad Noman Abbasi // BCS 3-F // 1912297
 
+;SOME FEATURE HIGHLIGHTS
+
+;0.  HAS KEWL Graphics
+
+;1.  Create Account
+;2.  Deposit Money
+;3.  Widthdraw Money
+;4.  Print Account Details
+;5.  Modify Account
+;6.  Reset Account
+
+;7.  Dynamic Pin Range
+;8.  Pin Verification
+;9.  Checks if account is created before performing functions
+;10. When withdrawing, checks whether if u have enough money in account
+     
 .model small
 .stack 100h
 .data
@@ -44,13 +60,13 @@
     op5mmsg5 db '/_/  /_/ \____/ \__,_//_//_/   \__, /$'  
     op5mmsg6 db '                              /____/$'
     
-op0mmsg1 db '   ____   __   __U _____ u$' 
-op0mmsg2 db 'U | __")u \ \ / /\| ___"|/$' 
-op0mmsg3 db ' \|  _ \/  \ V /  |  _|"$'   
-op0mmsg4 db '  | |_) | U_|"|_u | |___$'   
-op0mmsg5 db '  |____/    |_|   |_____|$'  
-op0mmsg6 db ' _|| \\_.-,//|(_  <<   >>$'  
-op0mmsg7 db '(__) (__)\_) (__)(__) (__)$'   
+    op0mmsg1 db '   ____   __   __U _____ u$' 
+    op0mmsg2 db 'U | __")u \ \ / /\| ___"|/$' 
+    op0mmsg3 db ' \|  _ \/  \ V /  |  _|"$'   
+    op0mmsg4 db '  | |_) | U_|"|_u | |___$'   
+    op0mmsg5 db '  |____/    |_|   |_____|$'  
+    op0mmsg6 db ' _|| \\_.-,//|(_  <<   >>$'  
+    op0mmsg7 db '(__) (__)\_) (__)(__) (__)$'   
                                      
     opmsg1 db '1. Create new Account$'
     opmsg2 db '2. Print Account Details$'
@@ -82,6 +98,7 @@ op0mmsg7 db '(__) (__)\_) (__)(__) (__)$'
     op2msg2 db 'Currently Saved Account PIN: $'
     op2msg3 db 'No Accounts Currently Saved !$'   
     op2msg4 db 'Total Money Left: $'
+    op2msg5 db 'You Have No Money $'
     
     ;Option 4 <Money> Messages
     op4msg1 db '1. Rs 1000$'
@@ -102,9 +119,9 @@ op0mmsg7 db '(__) (__)\_) (__)(__) (__)$'
     op6msg2_2 db ' ) : $'
     
     ;PIN Protection
-    pinop_msg1 db 'Enter Pin: $' 
-    pinop_msg2 db 'Account not created ... $'
-        
+    pinop_msg1 db 'Enter PIN: $' 
+    pinop_msg2 db 'Account NOT created ... $'
+
 .code
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
@@ -190,11 +207,8 @@ ret
 printNumber ENDP
 
 clearScreen proc near
-    pusha
-    mov ah,0x00
-    mov al,0x03
-    int 0x10
-    popa
+    call newLine
+    call newLine
     ret    
 clearScreen endp
                                      
@@ -367,9 +381,7 @@ op1 proc
         call newLine
         printString op1msg3
         call etcop1
-        
-     ;jmp mainloop    ;this basically returns the control back to the program
-    
+           
     ret
 op1 endp                                                                 
  
@@ -420,10 +432,17 @@ op2 proc
   
   printString op2msg4
   mov ax,totalAmount
+  cmp ax,0
+  je noMoneyError
   call printNumber 
   call newLine
   
   call etcop2    
+  
+  noMoneyError:
+    printString op2msg5
+    call newLine
+    call etcop2
     
   ret             
   
@@ -749,19 +768,7 @@ op6 endp
 ;                     E N T R Y    P O I N T                        ;
 ;                                                                   ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;1.  Create Account
-;2.  Deposit Money
-;3.  Widthdraw Money
-;4.  Print Account Details
-;5.  Modify Account
-;6.  Reset Account
-
-;7.  Dynamic Pin Range
-;8.  Pin Verification
-;9.  Checks if account is created before performing functions
-;10. When withdrawing, checks whether if u have enough money in account
-            
+       
 Main proc
     
     mov ax,@data
