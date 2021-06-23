@@ -1,4 +1,4 @@
-# Bank Management System
+# Bank Management System (semester project)
 
 Simple yet complex management system made using emu8086
 
